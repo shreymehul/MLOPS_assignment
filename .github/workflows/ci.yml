@@ -1,0 +1,32 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install dvc scikit-learn pandas joblib
+
+    - name: Cache DVC cache
+      uses: actions/cache@v2
+      with:
+        path: .dvc/cache
+        key: ${{ runner.os }}-dvc-${{ hashFiles('**/*.dvc') }}
+        restore-keys: |
+          ${{ runner.os }}-dvc-
+
+    - name: Reproduce pipeline
+      run: dvc repro
