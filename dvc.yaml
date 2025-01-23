@@ -1,0 +1,14 @@
+stages:
+  train_model:
+    cmd: python src/train.py
+    deps:
+    - data/dataset.csv
+    outs:
+    - models/model.joblib
+  test_model:
+    cmd: python src/test.py
+    deps:
+    - data/dataset.csv
+    - models/model.joblib
+    outs:
+    - results/test_results.txt
