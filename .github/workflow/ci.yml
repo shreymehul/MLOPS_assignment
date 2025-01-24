@@ -17,7 +17,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
+        python3 -m pip install --upgrade pip
         pip install dvc scikit-learn pandas joblib
 
     - name: Cache DVC cache
@@ -35,4 +35,4 @@ jobs:
       run: dvc status
 
     - name: Reproduce pipeline
-      run: dvc repro
+      run: python3 -m dvc repro
