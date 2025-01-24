@@ -20,7 +20,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install dvc scikit-learn pandas joblib
 
-    - name: Cache DVC cache  # Step to cache DVC cache directory
+    - name: Cache DVC cache  # Step to cache DVC cache directory (local storage)
       uses: actions/cache@v3  # Updated to v3
       with:
         path: .dvc/cache
@@ -28,8 +28,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-dvc-
 
-    - name: Pull DVC data  # Step to pull DVC data from remote storage
-      run: dvc pull
+    - name: Pull DVC data  # Step to pull DVC data from local storage (cached)
+      run: |
+        # If data isn't in the cache, use DVC to pull it from the cache directory.
+        if [ ! -d ".dvc/cache" ]; then
+          dvc pull
+        fi
 
     - name: Check DVC status  # Debug step to check DVC status
       run: dvc status
