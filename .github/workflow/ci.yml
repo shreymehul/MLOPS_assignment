@@ -1,42 +1,38 @@
-name: CI  # Name of the GitHub Actions workflow
+name: CI
 
-on: [push]  # Trigger the workflow on push events
+on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Specify the runner environment
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code  # Step to checkout the repository code
+    - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Python  # Step to set up Python environment
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x'  # Specify the Python version
+        python-version: '3.x'
 
-    - name: Install dependencies  # Step to install required dependencies
+    - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install dvc scikit-learn pandas joblib
 
-    - name: Cache DVC cache  # Step to cache DVC cache directory (local storage)
-      uses: actions/cache@v3  # Updated to v3
+    - name: Cache DVC cache
+      uses: actions/cache@v3
       with:
         path: .dvc/cache
-        key: ${{ runner.os }}-dvc-${{ hashFiles('**/*.dvc', '**/data/**') }}  # Include data files
+        key: ${{ runner.os }}-dvc-${{ hashFiles('**/*.dvc', '**/data/**/*') }}
         restore-keys: |
           ${{ runner.os }}-dvc-
 
-    - name: Pull DVC data  # Step to pull DVC data from local storage (cached)
-      run: |
-        # If data isn't in the cache, use DVC to pull it from the cache directory.
-        if [ ! -d ".dvc/cache" ]; then
-          dvc pull
-        fi
+    - name: Pull DVC data
+      run: dvc pull
 
-    - name: Check DVC status  # Debug step to check DVC status
+    - name: Check DVC status
       run: dvc status
 
-    - name: Reproduce pipeline  # Step to reproduce the DVC pipeline
+    - name: Reproduce pipeline
       run: dvc repro
