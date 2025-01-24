@@ -1,3 +1,4 @@
 # Ignore DVC cache
 .dvc/cache/
+data/dataset.csv
 
