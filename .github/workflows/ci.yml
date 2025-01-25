@@ -22,8 +22,8 @@ jobs:
 
     - name: Run training script
       run: |
-        python train.py
+        python src/train.py
 
     - name: Run testing script
       run: |
-        python test.py
+        python src/test.py
