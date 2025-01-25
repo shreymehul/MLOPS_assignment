@@ -1,36 +1,44 @@
 import pandas as pd
+import optuna
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 import joblib
 
-# Function to load data from a CSV file
-def load_data(filepath):
-    df = pd.read_csv(filepath, header=None)  # Read the CSV file into a DataFrame
-    X = df.iloc[:, :-1]  # Select all columns except the last one as features
-    y = df.iloc[:, -1]  # Select the last column as the target variable
-    return X, y
+# Load dataset
+df = pd.read_csv('data/dataset.csv', header=None)
+X = df.iloc[:, :-1]
+y = df.iloc[:, -1]
 
-# Function to train a logistic regression model
-def train(X, y):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)  # Split the data into training and testing sets
-    model = LogisticRegression()  # Initialize the logistic regression model
-    model.fit(X_train, y_train)  # Train the model on the training data
-    y_pred = model.predict(X_test)  # Predict the target variable for the test data
-    accuracy = accuracy_score(y_test, y_pred)  # Calculate the accuracy of the model
-    print(f'Accuracy: {accuracy}')  # Print the accuracy
-    return model  # Return the trained model
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Function to save the trained model to a file
-def save_model(model, filepath):
-    joblib.dump(model, filepath)  # Save the model to the specified file
+# Define the objective function for Optuna
+def objective(trial):
+    # Suggest hyperparameters
+    C = trial.suggest_loguniform('C', 1e-5, 1e2)
+    solver = trial.suggest_categorical('solver', ['lbfgs', 'liblinear', 'saga'])
+    max_iter = trial.suggest_int('max_iter', 100, 1000)
 
-# Main function to load data, train the model, and save the model
-def main():
-    X, y = load_data('data/dataset.csv')  # Load the data from the CSV file
-    model = train(X, y)  # Train the model
-    save_model(model, 'models/model.joblib')  # Save the trained model
+    # Train model with suggested hyperparameters
+    model = LogisticRegression(C=C, solver=solver, max_iter=max_iter, random_state=42)
+    model.fit(X_train, y_train)
 
-# Entry point of the script
-if _name_ == "_main_":
-    main()  # Call the main function
+    # Evaluate the model
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    return accuracy
+
+# Run Optuna study to find the best hyperparameters
+study = optuna.create_study(direction='maximize')
+study.optimize(objective, n_trials=50)
+
+# Print the best parameters
+print(f'Best parameters: {study.best_params}')
+
+# Train the model with the best parameters
+best_model = LogisticRegression(**study.best_params, random_state=42)
+best_model.fit(X_train, y_train)
+
+# Save the best model
+joblib.dump(best_model, 'models/models.joblib')
