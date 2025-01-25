@@ -17,7 +17,7 @@ def save_results(accuracy):
     os.makedirs('results', exist_ok=True)
     
     # Define the result file path
-    result_file = 'results/accuracy.txt'
+    result_file = 'results/accuracy3.txt'
     
     # Save the accuracy result to the file
     with open(result_file, 'w') as file:
@@ -29,7 +29,7 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)  # Split the data into training and testing sets
     
     # Load the saved model
-    model = joblib.load('models/models.joblib')  # Load the trained model from the file
+    model = joblib.load('models/models3.joblib')  # Load the trained model from the file
     
     # Evaluate the model
     y_pred = model.predict(X_test)  # Predict the target variable for the test data

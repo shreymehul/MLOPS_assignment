@@ -41,4 +41,4 @@ best_model = LogisticRegression(**study.best_params, random_state=42)
 best_model.fit(X_train, y_train)
 
 # Save the best model
-joblib.dump(best_model, 'models/models.joblib')
+joblib.dump(best_model, 'models/models3.joblib')
