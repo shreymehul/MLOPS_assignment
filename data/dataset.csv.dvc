@@ -3,4 +3,3 @@ outs:
   size: 23278
   hash: md5
   path: dataset.csv
-  isexec: true
