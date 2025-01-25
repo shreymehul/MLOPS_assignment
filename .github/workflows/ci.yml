@@ -18,15 +18,13 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install dvc scikit-learn pandas joblib
+        pip install scikit-learn pandas joblib
+        pip install optuna
 
-    - name: Cache DVC cache
-      uses: actions/cache@v2
-      with:
-        path: .dvc/cache
-        key: ${{ runner.os }}-dvc-${{ hashFiles('**/*.dvc') }}
-        restore-keys: |
-          ${{ runner.os }}-dvc-
+    - name: Run training script
+      run: |
+        python src/train.py
 
-    - name: Reproduce pipeline
-      run: dvc repro
+    - name: Run testing script
+      run: |
+        python src/test.py

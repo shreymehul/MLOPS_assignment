@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score
 import joblib
 
 # Load dataset
-df = pd.read_csv('data/dataset.csv', header=None)
+df = pd.read_csv('src/dataset.csv', header=None)
 X = df.iloc[:, :-1]
 y = df.iloc[:, -1]
 
