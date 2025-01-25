@@ -10,7 +10,7 @@ ACCURACY_FILE_PATH = os.path.join('results', 'bestaccuracy.txt')
 
 @app.route('/')
 def home():
-    return "Welcome to the ML Model API. Use the /predict endpoint to read accuracy."
+    return "Welcome to the MLOPS Assigment Group 91. Use the /predict endpoint to read accuracy."
 
 
 @app.route('/predict', methods=['GET'])
